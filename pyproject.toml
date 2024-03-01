@@ -26,11 +26,11 @@ dependencies = [
 ]
 
 [project.scripts]
-vzdump-hook-script = "proxmox_grapple.vzdump_hook_script:main"
+proxmox-grapple = "proxmox_grapple.vzdump_hook_script:main"
 
 [project.urls]
-Homepage = "https://github.com/pypa/sampleproject"
-Issues = "https://github.com/pypa/sampleproject/issues"
+Homepage = "https://github.com/lingfish/proxmox-grapple"
+Issues = "https://github.com/lingfish/proxmox-grapple/issues"
 
 [tool.setuptools.dynamic]
 version = {attr = "proxmox_grapple.__version__"}

@@ -30,3 +30,8 @@ backup-end:
 |------------|----------------|----------------|---------|
 | 8          | 12 (Bookworm)  | 3.11           | TBA     |
 | 7          | 11 (Bullseye)  | 3.9            | 2024-07 |
+
+
+## Installation
+
+The recommended way to install `proxmox-grapple` is to use [pipx](https://pipx.pypa.io/stable/).
