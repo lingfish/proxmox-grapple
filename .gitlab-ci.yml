@@ -18,11 +18,14 @@ test:
   stage: test
   tags:
     - docker
-  image: python:latest
+  image: "python:$VERSION"
   script:
     - python --version ; pip --version  # For debugging
     - pip install pytest tox click
-    - tox
+    - tox -e py${VERSION}
+  parallel:
+    matrix:
+      - VERSION: ['3.9', '3.11']
   artifacts:
     when: always
     reports:

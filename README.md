@@ -21,3 +21,12 @@ job-end:
 backup-end:
   extract: true
 ```
+
+## Supported versions
+
+`proxmox-grapple` supports the following VE versions:
+
+| VE version | Debian version | Python version | VE EoL  |
+|------------|----------------|----------------|---------|
+| 8          | 12 (Bookworm)  | 3.11           | TBA     |
+| 7          | 11 (Bullseye)  | 3.9            | 2024-07 |
