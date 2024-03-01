@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proxmox-grapple"
+dynamic = ["version"]
+authors = [
+    { name="Jason Lingohr", email="jason@lucid.net.au" },
+]
+description = "The grappling hook for Proxmox backups."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GPL License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "click",
+    "daiquiri",
+    "humanize",
+    "psutil",
+    "pyyaml",
+    "dynaconf",
+]
+
+[project.scripts]
+vzdump-hook-script = "proxmox_grapple.vzdump_hook_script:main"
+
+[project.urls]
+Homepage = "https://github.com/pypa/sampleproject"
+Issues = "https://github.com/pypa/sampleproject/issues"
+
+[tool.setuptools.dynamic]
+version = {attr = "proxmox_grapple.__version__"}
+
+[tool.pylint]
+max-line-length = 120

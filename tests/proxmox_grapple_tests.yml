@@ -1,0 +1,26 @@
+testing:
+  job-end:
+    script:
+      - echo 'hi'
+      - sleep 1
+      - echo 'there'
+      - echo 'This is a test.'
+
+  backup-end:
+    extract:
+      enabled: true
+      source_directory: /tmp
+      destination_directory: /tmp
+  #    exclude_storeids:
+
+  job-start:
+    script:
+      - some_missing_command
+
+  backup-start:
+    script:
+      - /usr/bin/false
+
+  post-restart:
+    script:
+      derp
