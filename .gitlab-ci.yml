@@ -62,7 +62,7 @@ pypi_test:
     TWINE_PASSWORD: $PYPI_TEST_PASSWORD
   script:
     - pip install twine
-    - python3 -m twine upload --repository testpypi dist/*
+    - python3 -m twine upload --repository testpypi --skip-existing dist/*
 
 pypi_prod:
   stage: pypi

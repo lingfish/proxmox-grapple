@@ -3,7 +3,7 @@ from dynaconf import Dynaconf, Validator
 settings = Dynaconf(
     settings_files=['proxmox_grapple.yml', '/etc/proxmox_grapple.yml'],
     environments=True,
-    # env='production',
+    env='production',
     apply_default_on_none=True,
     core_loaders=['YAML'],
     validators=[
