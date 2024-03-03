@@ -7,8 +7,14 @@ written in Python, and that offers a lot more configurability.
 
 Different phases of the `vzdump` backup can be hooked into, and scripts can be run.
 
+The app also logs script output in realtime -- useful when using a long-running process (like `rclone` for example),
+and you want to see progressive timestamping against its output.
+
+## Table of contents
+
 <!-- TOC -->
 * [Proxmox-grapple](#proxmox-grapple)
+  * [Table of contents](#table-of-contents)
   * [Installation](#installation)
   * [Configuration](#configuration)
     * [Overview](#overview)
