@@ -15,6 +15,7 @@ and you want to see progressive timestamping against its output.
 <!-- TOC -->
 * [Proxmox-grapple](#proxmox-grapple)
   * [Table of contents](#table-of-contents)
+  * [Purpose and uses](#purpose-and-uses)
   * [Installation](#installation)
   * [Configuration](#configuration)
     * [Overview](#overview)
@@ -22,6 +23,41 @@ and you want to see progressive timestamping against its output.
     * [Configuration environments](#configuration-environments)
   * [Supported versions](#supported-versions)
 <!-- TOC -->
+
+
+## Purpose and uses
+
+Having hooks into each part of `vzdump` backups is very useful, especially to detect failures (or success) of the
+different backup phases.
+
+For example, it can be used in concert
+with [Healthchecks.io](https://healthchecks.io/), [Mailrise](https://github.com/YoRyan/mailrise)/[Apprise](https://github.com/caronc/apprise),
+or other apps, to receive status notifications:
+
+```yaml
+production:
+  job-start:
+    script:
+      - "curl -fsS -m 10 --retry 5 -o /dev/null https://your.healthchecks.server/ping/xxx/vzdump-backups/start"
+  job-abort:
+    script:
+      - "curl -fsS -m 10 --retry 5 -o /dev/null https://your.healthchecks.server/ping/xxx/vzdump-backups/fail"
+  backup-abort:
+    script:
+      - "curl -fsS -m 10 --retry 5 -o /dev/null https://your.healthchecks.server/ping/xxx/vzdump-backups/fail"
+```
+
+Maybe you'd like to offsite-sync your backups on job completion:
+
+```yaml
+  job-end:
+    script:
+      - "ssh some.host rclone sync --checkers 32 --transfers 16 --dscp cs1 --stats-log-level NOTICE --stats-unit=bits --stats=2m /mnt/pbs-backups remote.host:pbs-rsync"
+      - "curl -fsS -m 10 --retry 5 -o /dev/null https://your.healthchecks.server/ping/xxx/vzdump-backups"
+```
+
+Anything that can be run on the CLI, you can use here.
+
 
 ## Installation
 
