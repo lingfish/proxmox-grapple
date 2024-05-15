@@ -69,7 +69,9 @@ After getting `pipx` installed, simply run:
 username@proxmox:~$ pipx install proxmox-grapple
 ```
 
-Please, please [don't use pip system-wide](https://docs.python.org/3.11/installing/index.html#installing-into-the-system-python-on-linux).
+Please [don't use pip system-wide](https://docs.python.org/3.11/installing/index.html#installing-into-the-system-python-on-linux).
+
+You can of course also install it using classic virtualenvs.
 
 Once installed, you need to tell Proxmox (specifically `vzdump`) to use the app. Edit `/etc/vzdump.conf` and add or edit
 the `script` setting:
