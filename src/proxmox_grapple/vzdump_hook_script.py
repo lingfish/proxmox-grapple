@@ -23,8 +23,8 @@ import click
 from dynaconf import ValidationError
 
 from proxmox_grapple.vma_extractor import main as extractor
-from proxmox_grapple.config import settings
-from proxmox_grapple import __version__
+from .config import settings
+from ._version import __version__
 
 
 

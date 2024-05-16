@@ -1,6 +1,6 @@
 from click.testing import CliRunner
 from proxmox_grapple.vzdump_hook_script import main
-from proxmox_grapple import __version__
+from proxmox_grapple._version import __version__
 
 
 def test_help():

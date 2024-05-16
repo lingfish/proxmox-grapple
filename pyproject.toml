@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -32,8 +32,9 @@ proxmox-grapple = "proxmox_grapple.vzdump_hook_script:main"
 Homepage = "https://github.com/lingfish/proxmox-grapple"
 Issues = "https://github.com/lingfish/proxmox-grapple/issues"
 
-[tool.setuptools.dynamic]
-version = {attr = "proxmox_grapple.__version__"}
+[tool.setuptools_scm]
+version_file = "src/proxmox_grapple/_version.py"
+local_scheme = "no-local-version"
 
 [tool.pylint]
 max-line-length = 120
