@@ -24,3 +24,11 @@ testing:
   post-restart:
     script:
       derp
+
+  backup-abort:
+    shell:
+      - echo 'This is a test' | tr 'i' 'z'
+
+  pre-restart:
+    script:
+      - echo 'This is a test' | tr 'i' 'z'

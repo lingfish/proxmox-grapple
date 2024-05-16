@@ -5,7 +5,7 @@ The Python app that "hooks" into Proxmox.
 This is a clone of [vzdump-hook-script.pl](https://github.com/proxmox/pve-manager/blob/master/vzdump-hook-script.pl) that is
 written in Python, and that offers a lot more configurability.
 
-Different phases of the `vzdump` backup can be hooked into, and scripts can be run.
+Different phases of the `vzdump` backup can be hooked into, and things can be run.
 
 The app also logs script output in realtime -- useful when using a long-running process (like `rclone` for example),
 and you want to see progressive timestamping against its output.
@@ -27,6 +27,7 @@ and you want to see progressive timestamping against its output.
 
 ## Purpose and uses
 
+### Running binaries
 Having hooks into each part of `vzdump` backups is very useful, especially to detect failures (or success) of the
 different backup phases.
 
@@ -58,6 +59,21 @@ Maybe you'd like to offsite-sync your backups on job completion:
 
 Anything that can be run on the CLI, you can use here.
 
+### Running things via a shell
+
+Instead of using `script`, you can use `shell`, and anything configured will be run through a shell.  This is directly
+equivalent to the `shell` argument to Python's [`subprocess.Popen`](https://docs.python.org/3/library/subprocess.html#subprocess.Popen).
+
+What's the benefit here?  To quote the Python documentation:
+
+> If shell is True, the specified command will be executed through the shell. This can be useful if you are using Python
+> primarily for the enhanced control flow it offers over most system shells and still want convenient access to other
+> shell features such as shell pipes, filename wildcards, environment variable expansion, and expansion of ~ to a user’s
+> home directory.
+
+The shell used is `/bin/sh`.
+
+>⚠️ **WARNING!** Read Python's [Security Considerations](https://docs.python.org/3/library/subprocess.html#security-considerations) section before using `shell`!
 
 ## Installation
 
@@ -102,6 +118,10 @@ production:
       source_directory: /tmp
       destination_directory: /tmp
   #    exclude_storeids:
+
+  job-abort:
+    shell:
+      - echo 'your strange command' | tee some_logfile.txt
 ```
 
 ### Location

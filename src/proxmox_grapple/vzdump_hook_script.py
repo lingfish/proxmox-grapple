@@ -12,7 +12,7 @@ Example parameters in production:
 101: Sep 23 00:15:07 INFO: HOOK: backup-end snapshot 101
 101: Sep 23 00:15:07 INFO: HOOK-ENV: vmtype=qemu;dumpdir=/dati1/dump;storeid=dati1;hostname=vmname;tarfile=/dati1/dump/vzdump-qemu-101-2016_09_22-23_10_01.vma.lzo;logfile=/dati1/dump/vzdump-qemu-101-2016_09_22-23_10_01.log
 """
-
+import shlex
 import sys
 import os
 from pathlib import Path
@@ -102,16 +102,24 @@ def main(ctx, config, phase, mode, vmid):
                 # Extraction not enabled
                 pass
 
-            if settings[phase].get('script'):
-                for script in settings[phase].script:
+            if any(k in settings[phase] for k in ['script', 'shell']):
+                mode = list(settings[phase].keys())[0]
+                if mode == 'shell':
+                    shell = True
+                else:
+                    shell = False
+
+                for exec_line in settings[phase][mode]:
                     try:
-                        click.echo(f'    Running: {script}')
-                        with Popen(script.split(), stdout=PIPE, stderr=STDOUT, text=True, encoding='utf-8') as proc:
+                        click.echo(f'    Running (mode {mode}): {exec_line}')
+                        if mode == 'script':
+                            exec_line = shlex.split(exec_line)
+                        with Popen(exec_line, stdout=PIPE, stderr=STDOUT, text=True, encoding='utf-8', shell=shell) as proc:
                             for line in proc.stdout:
                                 click.echo(f'{textwrap.indent(line, " " * 4)}', nl=False)
                         rc = proc.returncode
                         if rc:
-                            raise CalledProcessError(rc, script.split())
+                            raise CalledProcessError(rc, exec_line)
 
                     except (CalledProcessError, SubprocessError, OSError) as e:
                         click.echo(f'{phase.upper()}: ERROR! Something went wrong', err=True)

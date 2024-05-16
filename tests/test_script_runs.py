@@ -35,3 +35,13 @@ def test_script_missing_cli_config(runner):
     result = runner.invoke(main, args=['--config', '/nonexistent_file.yaml', 'job-end'], catch_exceptions=False)
     assert 'ERROR: Config file does not exist' in result.output
     assert result.exit_code == 1
+
+def test_shell_success(runner):
+    result = runner.invoke(main, args=['backup-abort'], catch_exceptions=False)
+    assert result.exit_code == 0
+    assert 'Thzs zs a test' in result.output
+
+def test_script_fails_looks_like_shell(runner):
+    result = runner.invoke(main, args=['pre-restart'], catch_exceptions=False)
+    assert 'This is a test | tr i z' in result.output
+    assert result.exit_code == 0
