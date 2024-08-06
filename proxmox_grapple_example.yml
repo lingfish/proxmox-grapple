@@ -1,12 +1,15 @@
 production:
   job-end:
-    script:
+    mode: script
+    run:
       - echo 'hi'
       - sleep 1
       - echo 'there'
       - echo 'This is a test.'
 
   backup-end:
+    mode: script
+    run:
     extract:
       enabled: false
       source_directory: /tmp

@@ -20,7 +20,7 @@ from subprocess import Popen, PIPE, STDOUT, CalledProcessError, SubprocessError
 import textwrap
 
 import click
-from dynaconf import ValidationError
+from dynaconf import ValidationError, inspect_settings
 
 from proxmox_grapple.vma_extractor import main as extractor
 from .config import settings
@@ -40,15 +40,16 @@ def dump_config(ctx, param, value):
 
 
 @click.command()
-@click.option('--dump-config', is_flag=True, callback=dump_config, expose_value=False, is_eager=True,
-              help='Dump config as determined by dynaconf')
+# @click.option('--dump-config', is_flag=True, callback=dump_config, expose_value=False, is_eager=True,
+#               help='Dump config as determined by dynaconf')
+@click.option('--dump-config', is_flag=True, help='Dump config after being parsed by Dynaconf')
 @click.option('--config', '-c', required=False, help='Config file path')
 @click.version_option(version=__version__)
 @click.argument('phase')
 @click.argument('mode', required=False)
 @click.argument('vmid', required=False)
 @click.pass_context
-def main(ctx, config, phase, mode, vmid):
+def main(ctx, dump_config, config, phase, mode, vmid):
     """The grappling hook for Proxmox backups.  A more configurable replacement for the Perl version supplied by
     Proxmox Server Solutions GmbH.
 
@@ -73,6 +74,10 @@ def main(ctx, config, phase, mode, vmid):
             sys.exit(1)
 
     click.echo(f'HOOK: {" ".join(sys.argv)}')
+
+    if dump_config:
+        click.echo(inspect_settings(settings, print_report=True, dumper="yaml"))
+        sys.exit(0)
 
     # if os.environ.get('STOREID', None) == 'pbs':
     #    click.echo('Detected running in Proxmox Backup Server, exiting')
@@ -102,17 +107,13 @@ def main(ctx, config, phase, mode, vmid):
                 # Extraction not enabled
                 pass
 
-            if any(k in settings[phase] for k in ['script', 'shell']):
-                mode = list(settings[phase].keys())[0]
-                if mode == 'shell':
-                    shell = True
-                else:
-                    shell = False
+            if settings[phase].mode in ['script', 'shell']:
+                shell = settings[phase].mode == 'shell'
 
-                for exec_line in settings[phase][mode]:
+                for exec_line in settings[phase]['run']:
                     try:
-                        click.echo(f'    Running (mode {mode}): {exec_line}')
-                        if mode == 'script':
+                        click.echo(f'    Running (mode {settings[phase].mode}): {exec_line}')
+                        if settings[phase].mode == 'script':
                             exec_line = shlex.split(exec_line)
                         with Popen(exec_line, stdout=PIPE, stderr=STDOUT, text=True, encoding='utf-8', shell=shell) as proc:
                             for line in proc.stdout:
@@ -126,7 +127,7 @@ def main(ctx, config, phase, mode, vmid):
                         click.echo(f'    {e}')
 
         else:
-            click.echo(f'HOOK: Got unknown phase "{phase}", ignoring')
+            click.echo(f'HOOK: Got unknown or unconfigured phase "{phase}", ignoring')
 
     except KeyError as e:
         click.echo(e, err=True)

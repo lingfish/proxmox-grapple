@@ -8,8 +8,54 @@ settings = Dynaconf(
     core_loaders=['YAML'],
     validators=[
         Validator('job-init', 'job-start', 'job-end', 'job-abort', 'backup-start', 'backup-end', 'backup-abort',
-                  'log-end', 'pre-stop', 'pre-restart', 'post-restart', default={'script': None}
+                  'log-end', 'pre-stop', 'pre-restart', 'post-restart',
+                  is_type_of=dict),
+
+        Validator('job-init.mode', 'job-init.run',
+                  must_exist=True,
+                  when=Validator('job-init', must_exist=True)
                   ),
+        Validator('job-start.mode', 'job-start.run',
+                  must_exist=True,
+                  when=Validator('job-start', must_exist=True)
+                  ),
+        Validator('job-end.mode', 'job-end.run',
+                  must_exist=True,
+                  when=Validator('job-end', must_exist=True)
+                  ),
+        Validator('job-abort.mode', 'job-abort.run',
+                  must_exist=True,
+                  when=Validator('job-abort', must_exist=True)
+                  ),
+        Validator('backup-start.mode', 'backup-start.run',
+                  must_exist=True,
+                  when=Validator('backup-start', must_exist=True)
+                  ),
+        Validator('backup-end.mode', 'backup-end.run',
+                  must_exist=True,
+                  when=Validator('backup-end', must_exist=True)
+                  ),
+        Validator('backup-abort.mode', 'backup-abort.run',
+                  must_exist=True,
+                  when=Validator('backup-abort', must_exist=True)
+                  ),
+        Validator('log-end.mode', 'log-end.run',
+                  must_exist=True,
+                  when=Validator('log-end', must_exist=True)
+                  ),
+        Validator('pre-stop.mode', 'pre-stop.run',
+                  must_exist=True,
+                  when=Validator('pre-stop', must_exist=True)
+                  ),
+        Validator('pre-restart.mode', 'pre-restart.run',
+                  must_exist=True,
+                  when=Validator('pre-restart', must_exist=True)
+                  ),
+        Validator('post-restart.mode', 'post-restart.run',
+                  must_exist=True,
+                  when=Validator('post-restart', must_exist=True)
+                  ),
+
         Validator(
             'backup-end.extract.enabled',
             default=False

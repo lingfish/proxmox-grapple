@@ -10,17 +10,25 @@ Different phases of the `vzdump` backup can be hooked into, and things can be ru
 The app also logs script output in realtime -- useful when using a long-running process (like `rclone` for example),
 and you want to see progressive timestamping against its output.
 
+>⚠️ **NOTE!** Version 2.0.0 introduces a breaking change to the config file format!  See below.
+
 ## Table of contents
 
 <!-- TOC -->
 * [Proxmox-grapple](#proxmox-grapple)
   * [Table of contents](#table-of-contents)
   * [Purpose and uses](#purpose-and-uses)
+    * [Running binaries](#running-binaries)
+    * [Running things via a shell](#running-things-via-a-shell)
   * [Installation](#installation)
   * [Configuration](#configuration)
     * [Overview](#overview)
     * [Location](#location)
+    * [Configuration dump](#configuration-dump)
     * [Configuration environments](#configuration-environments)
+    * [Breaking change in 2.0.0](#breaking-change-in-200)
+      * [Before 2.0.0 format](#before-200-format)
+      * [New format](#new-format)
   * [Supported versions](#supported-versions)
 <!-- TOC -->
 
@@ -38,13 +46,16 @@ or other apps, to receive status notifications:
 ```yaml
 production:
   job-start:
-    script:
+    mode: script
+    run:
       - "curl -fsS -m 10 --retry 5 -o /dev/null https://your.healthchecks.server/ping/xxx/vzdump-backups/start"
   job-abort:
-    script:
+    mode: script
+    run:
       - "curl -fsS -m 10 --retry 5 -o /dev/null https://your.healthchecks.server/ping/xxx/vzdump-backups/fail"
   backup-abort:
-    script:
+    mode: script
+    run:
       - "curl -fsS -m 10 --retry 5 -o /dev/null https://your.healthchecks.server/ping/xxx/vzdump-backups/fail"
 ```
 
@@ -52,17 +63,22 @@ Maybe you'd like to offsite-sync your backups on job completion:
 
 ```yaml
   job-end:
-    script:
+    mode: script
+    run:
       - "ssh some.host rclone sync --checkers 32 --transfers 16 --dscp cs1 --stats-log-level NOTICE --stats-unit=bits --stats=2m /mnt/pbs-backups remote.host:pbs-rsync"
       - "curl -fsS -m 10 --retry 5 -o /dev/null https://your.healthchecks.server/ping/xxx/vzdump-backups"
 ```
+
+Or maybe as [@lloydbayley](https://github.com/lloydbayley) uses it, via `curl`:
+
+> It actually changes the RGB lights in my rack when a backup happens so it's purely decorative but I like to automate things.
 
 Anything that can be run on the CLI, you can use here.
 
 ### Running things via a shell
 
-Instead of using `script`, you can use `shell`, and anything configured will be run through a shell.  This is directly
-equivalent to the `shell` argument to Python's [`subprocess.Popen`](https://docs.python.org/3/library/subprocess.html#subprocess.Popen).
+Instead of using `mode: script`, you can use `mode: shell`, and anything configured will be run through a shell. This is
+directly equivalent to the `shell` argument to Python's [`subprocess.Popen`](https://docs.python.org/3/library/subprocess.html#subprocess.Popen).
 
 What's the benefit here?  To quote the Python documentation:
 
@@ -96,6 +112,7 @@ the `script` setting:
 script: /home/username/.local/bin/proxmox-grapple
 ```
 
+No other changes to the file is needed.
 
 ## Configuration
 
@@ -106,13 +123,16 @@ script: /home/username/.local/bin/proxmox-grapple
 ```yaml
 production:
   job-end:
-    script:
+    mode: script
+    run:
       - echo 'hi'
       - sleep 1
       - echo 'there'
       - echo 'This is a test.'
 
   backup-end:
+    mode: script
+    run:
     extract:
       enabled: false
       source_directory: /tmp
@@ -120,10 +140,33 @@ production:
   #    exclude_storeids:
 
   job-abort:
-    shell:
+    mode: shell
+    run:
       - echo 'your strange command' | tee some_logfile.txt
 ```
 
+Each top-level key should match the different `vzdump` phases.  The currently recognised phases are:
+
+* `job-init`
+* `job-start`
+* `job-end`
+* `job-abort`
+* `backup-start`
+* `backup-end`
+* `backup-abort`
+* `log-end`
+* `pre-stop`
+* `pre-restart`
+* `post-restart`
+
+All of these are optional, and if not configured, are ignored.
+
+If they *are* configured, the accompanying sub-keys are required:
+
+* `mode`
+* `run`
+
+>⚠️ The extract argument is currently not tested, and should be treated as a proof-of-concept only.
 ### Location
 
 The default location for the configuration is `/etc/proxmox_grapple.yml`, or `proxmox_grapple.yml` in the current
@@ -131,6 +174,10 @@ working directory, but this can also be specified on the commandline.
 
 If a non-absolute path is given, Dynaconf will iterate upwards: it will look at each parent up to the root of the
 system. For each visited folder, it will also try looking inside a `/config` folder.
+
+### Configuration dump
+
+There is a mode, `--dump-config`, that reads all possible configuration and then prints it out for validation purposes.
 
 ### Configuration environments
 
@@ -145,22 +192,28 @@ For example, to choose a different configuration environment, set the environmen
 ```shell
 root@proxmox:~# ENV_FOR_DYNACONF=lab proxmox-grapple --dump-config
 ```
-Each top-level key should match the different `vzdump` phases.  The currently recognised phases are:
 
-* job-init
-* job-start
-* job-end
-* job-abort
-* backup-start
-* backup-end
-* backup-abort
-* log-end
-* pre-stop
-* pre-restart
-* post-restart
+### Breaking change in 2.0.0
 
->⚠️ The extract argument is currently not tested, and should be treated as a proof-of-concept only.
+To enable the use of the two run modes, I've decided to change the schema of the config file that needs to be updated.
 
+#### Before 2.0.0 format
+
+```yaml
+production:
+  backup-start:
+    script:
+      - echo hi
+```
+
+#### New format
+```yaml
+production:
+  backup-start:
+    mode: script
+    run:
+      - echo hi
+```
 
 ## Supported versions
 

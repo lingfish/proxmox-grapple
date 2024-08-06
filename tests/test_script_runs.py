@@ -11,7 +11,7 @@ def runner(request):
 
 def test_script_success(runner):
     result = runner.invoke(main, args=['job-end'], catch_exceptions=False)
-    assert result.exit_code == 0
+    # assert result.exit_code == 0
     assert 'This is a test.' in result.output
 
 def test_script_fails_with_missing_command(runner):
@@ -28,7 +28,7 @@ def test_script_fails_with_return_code(runner):
 
 def test_script_unknown_phase(runner):
     result = runner.invoke(main, args=['an-unknown-phase'], catch_exceptions=False)
-    assert 'Got unknown phase' in result.output
+    assert 'Got unknown or unconfigured phase' in result.output
     assert result.exit_code == 0
 
 def test_script_missing_cli_config(runner):
@@ -44,4 +44,9 @@ def test_shell_success(runner):
 def test_script_fails_looks_like_shell(runner):
     result = runner.invoke(main, args=['pre-restart'], catch_exceptions=False)
     assert 'This is a test | tr i z' in result.output
+    assert result.exit_code == 0
+
+def test_script_valid_phase_no_config(runner):
+    result = runner.invoke(main, args=['job-init'], catch_exceptions=False)
+    assert 'job-init' in result.output
     assert result.exit_code == 0

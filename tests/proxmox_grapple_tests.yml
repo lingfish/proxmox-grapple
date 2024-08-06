@@ -1,12 +1,15 @@
 testing:
   job-end:
-    script:
+    mode: script
+    run:
       - echo 'hi'
       - sleep 1
       - echo 'there'
       - echo 'This is a test.'
 
   backup-end:
+    mode: script
+    run:
     extract:
       enabled: true
       source_directory: /tmp
@@ -14,21 +17,26 @@ testing:
   #    exclude_storeids:
 
   job-start:
-    script:
+    mode: script
+    run:
       - some_missing_command
 
   backup-start:
-    script:
+    mode: script
+    run:
       - /usr/bin/false
 
   post-restart:
-    script:
+    mode: script
+    run:
       derp
 
   backup-abort:
-    shell:
+    mode: shell
+    run:
       - echo 'This is a test' | tr 'i' 'z'
 
   pre-restart:
-    script:
+    mode: script
+    run:
       - echo 'This is a test' | tr 'i' 'z'
