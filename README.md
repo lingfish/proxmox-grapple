@@ -104,7 +104,8 @@ And all arguments in one:
 
 * `GRAPPLE_ALL_ARGS`
 
-These can then be used in your config as you see fit.
+These can then be used in your config as you see fit.  Note you'll need to use `shell` mode, or use binaries that can
+read/expand/interpolate environment variables for you.
 
 An example:
 
