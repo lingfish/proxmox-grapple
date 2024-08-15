@@ -90,6 +90,30 @@ What's the benefit here?  To quote the Python documentation:
 The shell used is `/bin/sh`.
 
 >⚠️ **WARNING!** Read Python's [Security Considerations](https://docs.python.org/3/library/subprocess.html#security-considerations) section before using `shell`!
+> 
+
+### Environment
+
+`proxmox-grapple` will expose the `vzdump` parameters to the following environment variables:
+
+* `GRAPPLE_PHASE`
+* `GRAPPLE_MODE`
+* `GRAPPLE_VMID`
+
+And all arguments in one:
+
+* `GRAPPLE_ALL_ARGS`
+
+These can then be used in your config as you see fit.
+
+An example:
+
+```shell
+GRAPPLE_PHASE=backup-start
+GRAPPLE_MODE=stop
+GRAPPLE_VMID=102
+GRAPPLE_ALL_ARGS=backup-start stop 102
+```
 
 ## Installation
 

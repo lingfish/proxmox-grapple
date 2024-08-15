@@ -109,13 +109,16 @@ def main(ctx, dump_config, config, phase, mode, vmid):
 
             if settings[phase].mode in ['script', 'shell']:
                 shell = settings[phase].mode == 'shell'
+                new_env = os.environ.copy()
+                new_env.update({f'GRAPPLE_{x.upper()}': ctx.params[x] for x in ['phase', 'mode', 'vmid'] if ctx.params[x] is not None})
+                new_env['GRAPPLE_ALL_ARGS'] = f'{phase} {mode} {vmid}'
 
                 for exec_line in settings[phase]['run']:
                     try:
                         click.echo(f'    Running (mode {settings[phase].mode}): {exec_line}')
                         if settings[phase].mode == 'script':
                             exec_line = shlex.split(exec_line)
-                        with Popen(exec_line, stdout=PIPE, stderr=STDOUT, text=True, encoding='utf-8', shell=shell) as proc:
+                        with Popen(exec_line, stdout=PIPE, stderr=STDOUT, text=True, encoding='utf-8', shell=shell, env=new_env) as proc:
                             for line in proc.stdout:
                                 click.echo(f'{textwrap.indent(line, " " * 4)}', nl=False)
                         rc = proc.returncode
