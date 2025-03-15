@@ -23,8 +23,9 @@ test:
   image: "python:$VERSION"
   script:
     - python --version ; pip --version  # For debugging
-    - pip install pytest tox click
+    - pip install pytest tox click codecov-cli
     - tox -e py${VERSION}
+    - codecov upload-process -r lingfish/proxmox-grapple --git-service github -f coverage.xml
   parallel:
     matrix:
       - VERSION: ['3.9', '3.11']
