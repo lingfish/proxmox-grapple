@@ -24,7 +24,7 @@ test:
   script:
     - python --version ; pip --version  # For debugging
     - pip install pytest tox click codecov-cli
-    - tox -e py${VERSION}
+    - tox
     - ls -lR
     - codecov upload-process -r lingfish/proxmox-grapple --git-service github -f coverage.xml
   parallel:
