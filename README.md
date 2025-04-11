@@ -1,5 +1,12 @@
 # Proxmox-grapple
 
+[![PyPI - Version](https://img.shields.io/pypi/v/proxmox-grapple.svg)](https://pypi.org/project/proxmox-grapple)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/proxmox-grapple.svg)](https://pypi.org/project/proxmox-grapple)
+[![codecov](https://codecov.io/gh/lingfish/proxmox-grapple/graph/badge.svg?token=4GK4K2J1V4)](https://codecov.io/gh/lingfish/proxmox-grapple)
+
+[![blog](https://img.shields.io/badge/blog-Nerd%20stuff-blue)](https://blog.lucid.net.au/category/nerd-stuff/)
+![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/lingfish)
+
 The Python app that "hooks" into Proxmox.
 
 This is a clone of [vzdump-hook-script.pl](https://github.com/proxmox/pve-manager/blob/master/vzdump-hook-script.pl) that is
