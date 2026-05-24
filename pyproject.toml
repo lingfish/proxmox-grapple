@@ -12,10 +12,16 @@ description = "The grappling hook for Proxmox backups."
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: System Administrators",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: System :: Archiving :: Backup",
+    "Topic :: System :: Systems Administration",
 ]
+keywords = ["proxmox", "vzdump", "backup", "hook", "script", "pve"]
 dependencies = [
     "click",
     "daiquiri",

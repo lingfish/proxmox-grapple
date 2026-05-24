@@ -24,6 +24,7 @@ and you want to see progressive timestamping against its output.
 <!-- TOC -->
 * [Proxmox-grapple](#proxmox-grapple)
   * [Table of contents](#table-of-contents)
+  * [Features](#features)
   * [Purpose and uses](#purpose-and-uses)
     * [Running binaries](#running-binaries)
     * [Running things via a shell](#running-things-via-a-shell)
@@ -39,6 +40,15 @@ and you want to see progressive timestamping against its output.
   * [Supported versions](#supported-versions)
 <!-- TOC -->
 
+## Features
+
+- **Drop-in replacement** for Proxmox's `vzdump-hook-script.pl`
+- **11 backup phases** — hook into `job-init`, `job-start`, `job-end`, `job-abort`, `backup-start`, `backup-end`, `backup-abort`, `log-end`, `pre-stop`, `pre-restart`, `post-restart`
+- **YAML configuration** — simple config file at `/etc/proxmox_grapple.yml` with support for multiple environments (production, lab, etc.)
+- **Two run modes** — `mode: script` for direct execution, `mode: shell` for shell pipes, wildcards, and env var expansion
+- **Real-time logging** — subprocess output streamed with progressive timestamps, ideal for long-running processes like `rclone`
+- **Environment variables** — `vzdump` parameters exposed as `GRAPPLE_PHASE`, `GRAPPLE_MODE`, `GRAPPLE_VMID`, and `GRAPPLE_ALL_ARGS`
+- **Validation** — `--dump-config` flag to preview and verify your configuration
 
 ## Purpose and uses
 
